@@ -22,6 +22,19 @@ public class GLIGlassFilter extends GlFilter {
     private float dup;
 
     public GLIGlassFilter(Context context, VideoViewFilterParams videoViewFilterParams) {
+        String myVertexShader="attribute vec4 aPosition;\n" +
+                "attribute vec4 aTexCoord;\n" +
+                "varying vec2 vTexCoord;\n" +
+                "uniform mat4 uMatrix;\n" +
+                "uniform mat4 uSTMatrix;\n" +
+                "void main() {\n" +
+                "    vTexCoord = (uSTMatrix * aTexCoord).xy;\n" +
+                "    gl_Position = uMatrix*aPosition;\n" +
+                "    //gl_Position = aPosition;\n" +
+                "    //vTexCoord = aTexCoord.xy;\n" +
+                "}";
+
+
         AssetManager assetManager = context.getAssets();
         String fragStr = null;
         String filePath="opengl/myFrag.frag";

@@ -24,7 +24,7 @@ import static android.opengl.GLES20.glViewport;
  * Created by sudamasayuki on 2017/05/16.
  */
 
-class EPlayerRenderer extends EFrameBufferObjectRenderer implements SurfaceTexture.OnFrameAvailableListener {
+public class EPlayerRenderer extends EFrameBufferObjectRenderer implements SurfaceTexture.OnFrameAvailableListener {
 
     private static final String TAG = EPlayerRenderer.class.getSimpleName();
 
@@ -50,6 +50,9 @@ class EPlayerRenderer extends EFrameBufferObjectRenderer implements SurfaceTextu
     private float aspectRatio = 1f;
 
     private SimpleExoPlayer simpleExoPlayer;
+    public static MyGrid myGrid;
+    private int width;
+    private int height;
 
     EPlayerRenderer(EPlayerView glPreview) {
         super();
@@ -122,15 +125,20 @@ class EPlayerRenderer extends EFrameBufferObjectRenderer implements SurfaceTextu
 
     @Override
     public void onSurfaceChanged(final int width, final int height) {
-        Log.d(TAG, "onSurfaceChanged width = " + width + "  height = " + height);
-        filterFramebufferObject.setup(width, height);
-        previewFilter.setFrameSize(width, height);
+        this.width=width;
+        this.height=height;
+        Log.d("获得屏幕尺寸哈哈哈哈或", "onSurfaceChanged width = " + width + "  height = " + height);
+        filterFramebufferObject.setup(this.width, this.height);
+        previewFilter.setFrameSize(this.width, this.height);
         if (glFilter != null) {
-            glFilter.setFrameSize(width, height);
+            glFilter.setFrameSize(this.width, this.height);
         }
 
-        aspectRatio = (float) width / height;
+        aspectRatio = (float) this.width / this.height;
+        //aspectRatio=1/aspectRatio;
         Matrix.frustumM(ProjMatrix, 0, -aspectRatio, aspectRatio, -1, 1, 5, 7);
+        //Matrix.perspectiveM(ProjMatrix, 0, 45.0f, width / (float)height, 0.1f, 100.0f);
+        //Matrix.orthoM(ProjMatrix,0,-aspectRatio,aspectRatio,-1,1,5f,7f);
         Matrix.setIdentityM(MMatrix, 0);
     }
 
@@ -149,13 +157,14 @@ class EPlayerRenderer extends EFrameBufferObjectRenderer implements SurfaceTextu
             if (glFilter != null) {
                 glFilter.setup();
                 glFilter.setFrameSize(fbo.getWidth(), fbo.getHeight());
+                //glFilter.setFrameSize(this.width, this.height);
             }
             isNewFilter = false;
         }
 
         if (glFilter != null) {
             filterFramebufferObject.enable();
-            glViewport(0, 0, filterFramebufferObject.getWidth(), filterFramebufferObject.getHeight());
+            //glViewport(0, 0, filterFramebufferObject.getWidth(), filterFramebufferObject.getHeight());
         }
 
         GLES20.glClear(GL_COLOR_BUFFER_BIT);
@@ -178,8 +187,9 @@ class EPlayerRenderer extends EFrameBufferObjectRenderer implements SurfaceTextu
         glPreview.requestRender();
     }
 
-    void setSimpleExoPlayer(SimpleExoPlayer simpleExoPlayer) {
+    void setSimpleExoPlayer(SimpleExoPlayer simpleExoPlayer, MyGrid myGrid) {
         this.simpleExoPlayer = simpleExoPlayer;
+        this.myGrid=myGrid;
     }
 
 }

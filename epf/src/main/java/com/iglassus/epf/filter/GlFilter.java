@@ -5,8 +5,10 @@ import android.opengl.GLES20;
 
 import java.util.HashMap;
 
+import com.iglassus.epf.EPlayerRenderer;
 import com.iglassus.epf.EglUtil;
 import com.iglassus.epf.EFramebufferObject;
+import com.iglassus.epf.MyGrid;
 
 import static android.opengl.GLES20.GL_FLOAT;
 import static android.opengl.GLES20.GL_FRAGMENT_SHADER;
@@ -44,11 +46,13 @@ public class GlFilter {
 
     private static final float[] VERTICES_DATA = new float[]{
             // X, Y, Z, U, V
-            -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-            1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-            1.0f, -1.0f, 0.0f, 1.0f, 0.0f
+            -1f, 1.0f, 0f, 0.0f, 1.0f,
+            0f, 1.0f, 0.0f, 1.0f, 1.0f,
+            -1f, -1.0f, 0f, 0.0f, 0.0f,
+            0f, -1.0f, 0.0f, 1.0f, 0.0f
     };
+
+    private static MyGrid myGrid;
 
     private static final int FLOAT_SIZE_BYTES = 4;
     protected static final int VERTICES_DATA_POS_SIZE = 3;
@@ -68,9 +72,12 @@ public class GlFilter {
     private int vertexBufferName;
 
     private final HashMap<String, Integer> handleMap = new HashMap<String, Integer>();
+    private int screenWidth;
+    private int screenHeight;
 
     public GlFilter() {
         this(DEFAULT_VERTEX_SHADER, DEFAULT_FRAGMENT_SHADER);
+        myGrid= EPlayerRenderer.myGrid;
     }
 
     public void setVertexShaderSource(String vertexShaderSource) {
@@ -99,6 +106,8 @@ public class GlFilter {
     }
 
     public void setFrameSize(final int width, final int height) {
+        screenHeight=height;
+        screenWidth=width;
     }
 
 
@@ -128,8 +137,10 @@ public class GlFilter {
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vertexBufferName);
         GLES20.glEnableVertexAttribArray(getHandle("aPosition"));
         GLES20.glVertexAttribPointer(getHandle("aPosition"), VERTICES_DATA_POS_SIZE, GL_FLOAT, false, VERTICES_DATA_STRIDE_BYTES, VERTICES_DATA_POS_OFFSET);
+        //GLES20.glVertexAttribPointer(getHandle("aPosition"), 3, GLES20.GL_FLOAT, false, 12, myGrid.getVertexBuffer());
         GLES20.glEnableVertexAttribArray(getHandle("aTextureCoord"));
         GLES20.glVertexAttribPointer(getHandle("aTextureCoord"), VERTICES_DATA_UV_SIZE, GL_FLOAT, false, VERTICES_DATA_STRIDE_BYTES, VERTICES_DATA_UV_OFFSET);
+        //GLES20.glVertexAttribPointer(getHandle("aTextureCoord"),2,GLES20.GL_FLOAT,false,8,myGrid.getTextureVertexBuffer());
 
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texName);
@@ -137,7 +148,11 @@ public class GlFilter {
 
         onDraw();
 
+        //GLES20.glViewport(0,0,screenWidth,screenHeight);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+        //GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, myGrid.getIndicesCount(), GLES20.GL_UNSIGNED_INT, myGrid.getIndiceBuffer());
+        //GLES20.glViewport(screenWidth/2,0,screenWidth/2,screenHeight);
+        //GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
 
         GLES20.glDisableVertexAttribArray(getHandle("aPosition"));
         GLES20.glDisableVertexAttribArray(getHandle("aTextureCoord"));

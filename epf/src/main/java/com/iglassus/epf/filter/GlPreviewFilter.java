@@ -17,18 +17,19 @@ public class GlPreviewFilter extends GlFilter {
     public static final int GL_TEXTURE_EXTERNAL_OES = 0x8D65;
 
     private static final String VERTEX_SHADER =
-            "uniform mat4 uMVPMatrix;\n" +
+            //"uniform mat4 uMVPMatrix;\n" +
                     "uniform mat4 uSTMatrix;\n" +
-                    "uniform float uCRatio;\n" +
+                    //"uniform float uCRatio;\n" +
 
                     "attribute vec4 aPosition;\n" +
                     "attribute vec4 aTextureCoord;\n" +
                     "varying highp vec2 vTextureCoord;\n" +
 
                     "void main() {\n" +
-                    "vec4 scaledPos = aPosition;\n" +
-                    "scaledPos.x = scaledPos.x * uCRatio;\n" +
-                    "gl_Position = uMVPMatrix * scaledPos;\n" +
+                    //"vec4 scaledPos = aPosition;\n" +
+                    //"scaledPos.x = scaledPos.x * uCRatio;\n" +
+                    //"gl_Position = uMVPMatrix * scaledPos;\n" +
+                    "gl_Position = aPosition;\n" +
                     "vTextureCoord = (uSTMatrix * aTextureCoord).xy;\n" +
                     "}\n";
 
@@ -52,9 +53,9 @@ public class GlPreviewFilter extends GlFilter {
     public void draw(final int texName, final float[] mvpMatrix, final float[] stMatrix, final float aspectRatio) {
         useProgram();
 
-        GLES20.glUniformMatrix4fv(getHandle("uMVPMatrix"), 1, false, mvpMatrix, 0);
+        //GLES20.glUniformMatrix4fv(getHandle("uMVPMatrix"), 1, false, mvpMatrix, 0);
         GLES20.glUniformMatrix4fv(getHandle("uSTMatrix"), 1, false, stMatrix, 0);
-        GLES20.glUniform1f(getHandle("uCRatio"), aspectRatio);
+        //GLES20.glUniform1f(getHandle("uCRatio"), aspectRatio);
 
         GLES20.glBindBuffer(GL_ARRAY_BUFFER, getVertexBufferName());
         GLES20.glEnableVertexAttribArray(getHandle("aPosition"));

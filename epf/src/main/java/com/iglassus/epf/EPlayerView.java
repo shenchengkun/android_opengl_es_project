@@ -4,51 +4,42 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
-import android.widget.Toast;
 
 import com.iglassus.epf.chooser.EConfigChooser;
 import com.iglassus.epf.contextfactory.EContextFactory;
 import com.iglassus.epf.filter.GlFilter;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 
+
 /**
  * Created by sudamasayuki on 2017/05/16.
  */
 public class EPlayerView extends GLSurfaceView implements SimpleExoPlayer.VideoListener {
 
-    private final static String TAG = EPlayerView.class.getSimpleName();
-
     private final EPlayerRenderer renderer;
     private SimpleExoPlayer player;
 
-    private float videoAspect = 1f;
-    private PlayerScaleType playerScaleType = PlayerScaleType.RESIZE_FIT_WIDTH;
-
     public EPlayerView(Context context) {
-        this(context, null);
+        this(context,null);
     }
 
     public EPlayerView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
         setEGLContextFactory(new EContextFactory());
         setEGLConfigChooser(new EConfigChooser());
 
         renderer = new EPlayerRenderer(this);
         setRenderer(renderer);
-        SurfaceHolder surfaceHolder=this.getHolder();
-        surfaceHolder.setFixedSize(3000,1500);
-
     }
 
-    public EPlayerView setSimpleExoPlayer(SimpleExoPlayer player) {
+    public EPlayerView setSimpleExoPlayer(SimpleExoPlayer player, MyGrid myGrid) {
         if (this.player != null) {
             this.player.release();
             this.player = null;
         }
         this.player = player;
         this.player.addVideoListener(this);
-        this.renderer.setSimpleExoPlayer(player);
+        this.renderer.setSimpleExoPlayer(player,myGrid);
         return this;
     }
 
@@ -56,46 +47,28 @@ public class EPlayerView extends GLSurfaceView implements SimpleExoPlayer.VideoL
         renderer.setGlFilter(glFilter);
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    //@Override
+    //protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    //    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+//
+    //    int width = getDefaultSize(0, widthMeasureSpec);//得到默认的大小（0，宽度测量规范）
+    //    int height = getDefaultSize(0, heightMeasureSpec);//得到默认的大小（0，高度度测量规范）
+    //    setMeasuredDimension(width, height); //设置测量尺寸,将高和宽放进去
+    //}
 
-        int measuredWidth = getMeasuredWidth();
-        int measuredHeight = getMeasuredHeight();
-
-        int viewWidth = measuredWidth;
-        int viewHeight = measuredHeight;
-
-        switch (playerScaleType) {
-            case RESIZE_FIT_WIDTH:
-                viewHeight = (int) (measuredWidth / videoAspect);
-                break;
-            case RESIZE_FIT_HEIGHT:
-                viewWidth = (int) (measuredHeight * videoAspect);
-                break;
-        }
-        //setMeasuredDimension(viewWidth, viewHeight);
-
-        int width = getDefaultSize(0, widthMeasureSpec);//得到默认的大小（0，宽度测量规范）
-        int height = getDefaultSize(0, heightMeasureSpec);//得到默认的大小（0，高度度测量规范）
-        setMeasuredDimension(width, height); //设置测量尺寸,将高和宽放进去
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    // SimpleExoPlayer.VideoListener
 
     @Override
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-        // Log.d(TAG, "width = " + width + " height = " + height + " unappliedRotationDegrees = " + unappliedRotationDegrees + " pixelWidthHeightRatio = " + pixelWidthHeightRatio);
-        videoAspect = ((float) width / height) * pixelWidthHeightRatio;
-        // Log.d(TAG, "videoAspect = " + videoAspect);
         requestLayout();
     }
 
     @Override
     public void onRenderedFirstFrame() {
-        // do nothing
     }
 
-
+    //@Override
+    //public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
+    //    super.surfaceChanged(holder, format, w, h);
+    //    holder.setFixedSize(3000,3000);
+    //}
 }

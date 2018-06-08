@@ -5,11 +5,16 @@
     android:layout_height="match_parent"
     android:background="#000000">
 
-    <com.iglassus.exoplayerfilter.MovieWrapperView
-        android:id="@+id/layout_movie_wrapper_iGlass"
+    <!--<com.iglassus.exoplayerfilter.MovieWrapperView-->
+        <!--android:id="@+id/layout_movie_wrapper_iGlass"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:visibility="gone"/>-->
+
+    <android.opengl.GLSurfaceView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:id="@+id/new_glsurfaceview"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,6 +22,7 @@
         android:orientation="horizontal"
         android:id="@+id/buffering_view"
         android:visibility="gone">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

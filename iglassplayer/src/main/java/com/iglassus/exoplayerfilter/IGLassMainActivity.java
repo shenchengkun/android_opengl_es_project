@@ -9,9 +9,11 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.hardware.display.DisplayManager;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,6 +23,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Display;
@@ -68,6 +71,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.gms.plus.PlusShare;
 import com.iglassus.epf.EPlayerView;
+import com.iglassus.epf.MyGrid;
 import com.iglassus.epf.filter.VideoViewFilterParams;
 import com.iglassus.exoplayerfilter.youtubeData.DeveloperKey;
 import com.iglassus.exoplayerfilter.youtubeData.EndlessRecyclerViewScrollListener;
@@ -81,6 +85,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -88,6 +93,8 @@ import java.util.List;
 
 import at.huber.youtubeExtractor.YouTubeUriExtractor;
 import at.huber.youtubeExtractor.YtFile;
+import jxl.Workbook;
+import jxl.read.biff.BiffException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -105,7 +112,7 @@ public class IGLassMainActivity extends Activity{
             bsk_bottompadding_percentage,bsk_leftrightpadding_percentage,bsk_middlepadding_percentage,null);
 
     private GridView gridView;
-    private SimpleExoPlayer player;
+    public static SimpleExoPlayer player;
     public static EPlayerView ePlayerView;
 
     private DefaultDataSourceFactory dataSourceFactory;
@@ -155,6 +162,9 @@ public class IGLassMainActivity extends Activity{
     private SharedPreferences pref;
     private RecyclerView mRecyclerView;
     private ListAdapter mAdapter;
+    public static Workbook book;
+    private MediaPlayer mediaPlayer;
+    public static GLRenderer glRenderer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -206,8 +216,9 @@ public class IGLassMainActivity extends Activity{
     }
 
     private void releasePlayer() {
-        ePlayerView.onPause();
-        ePlayerView = null;
+        //ePlayerView.onPause();
+        //ePlayerView = null;
+        mediaPlayer.release();
         player.stop();
         player.release();
         player = null;
@@ -292,6 +303,7 @@ public class IGLassMainActivity extends Activity{
 
 
     private void setUpControlPanel() {
+        int i=0;
         playPause=findViewById(R.id.play_pause);
         stretch=findViewById(R.id.stretch);
         mode=findViewById(R.id.mode);
@@ -304,11 +316,14 @@ public class IGLassMainActivity extends Activity{
                 isPlaying = isPlaying ? false : true;
                 playPause.setBackgroundColor(isPlaying? Color.YELLOW:Color.TRANSPARENT);
                 player.setPlayWhenReady(isPlaying);
+                mediaPlayer.pause();
+                //glRenderer.offset+=50;
             }
         });
         stretch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mediaPlayer.start();
                 if(is169){
                     bsk_upperpadding_percentage = 0.0f;
                     bsk_bottompadding_percentage = 0.0f;
@@ -323,7 +338,7 @@ public class IGLassMainActivity extends Activity{
                 stretch.setBackgroundColor(is169? Color.TRANSPARENT:Color.YELLOW);
                 videoViewFilterParams.setUpperPadding_percentage(bsk_upperpadding_percentage);
                 videoViewFilterParams.setBottomPadding_percentage(bsk_bottompadding_percentage);
-                ePlayerView.setGlFilter(FilterType.createGlFilter(filterType, videoViewFilterParams, getApplicationContext()));
+                //ePlayerView.setGlFilter(FilterType.createGlFilter(filterType, videoViewFilterParams, getApplicationContext()));
             }
         });
         mode.setOnClickListener(new View.OnClickListener() {
@@ -333,7 +348,7 @@ public class IGLassMainActivity extends Activity{
                         VideoViewFilterParams.FrameImgFormatEnum.Format3D:VideoViewFilterParams.FrameImgFormatEnum.Format2D;
                 mode.setBackgroundColor(frameImgFormatEnum== VideoViewFilterParams.FrameImgFormatEnum.Format3D?Color.TRANSPARENT:Color.YELLOW);
                 videoViewFilterParams.setFrameImgFormat(frameImgFormatEnum);
-                ePlayerView.setGlFilter(FilterType.createGlFilter(filterType, videoViewFilterParams, getApplicationContext()));
+                //ePlayerView.setGlFilter(FilterType.createGlFilter(filterType, videoViewFilterParams, getApplicationContext()));
             }
         });
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -429,7 +444,7 @@ public class IGLassMainActivity extends Activity{
 
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
-                playPause.performClick();
+                //playPause.performClick();
                 if(unlock.getVisibility()==View.GONE) {
                     unlock.setVisibility(View.VISIBLE);
                     new Handler().postDelayed(new Runnable() {
@@ -683,13 +698,50 @@ public class IGLassMainActivity extends Activity{
             }
         });
     }
-
     private void setUoGlPlayerView() {
-        ePlayerView = new EPlayerView(this.getApplicationContext());
-        ePlayerView.setSimpleExoPlayer(player);
-        ePlayerView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        ePlayerView.onResume();
-        ePlayerView.setGlFilter(FilterType.createGlFilter(filterType, videoViewFilterParams, getApplicationContext()));
+        try {
+            InputStream inputStream = getResources().openRawResource(R.raw.distortion_data);
+            book = Workbook.getWorkbook(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (BiffException e) {
+            e.printStackTrace();
+        }
+        Grid grid=new Grid(13,13);
+        //Log.i("哈哈哈或或或或或或或或或或或或或或或",String.valueOf(grid.getHeight()));
+        //MyGrid myGrid=new MyGrid(grid.getVertices(),grid.getTexels(),grid.getIndices(),grid.getIndicesCount());
+        mediaPlayer=new MediaPlayer();
+        try{
+            mediaPlayer.setDataSource(getApplicationContext(), Uri.fromFile(new File("/sdcard/cat.mp4")));
+            //Uri uri=Uri.parse("rtsp://r2---sn-a5m7zu76.c.youtube.com/Ck0LENy73wIaRAnTmlo5oUgpQhMYESARFEgGUg5yZWNvbW1lbmRhdGlvbnIhAWL2kyn64K6aQtkZVJdTxRoO88HsQjpE1a8d1GxQnGDmDA==/0/0/0/video.3gp");
+            //mediaPlayer.setDataSource("http://www.html5videoplayer.net/videos/toystory.mp4");
+
+            /*
+            https://ccs3.akamaized.net/cchanclips/a6164c61eddb455190330e05c6c91ca6/clip.mp4
+            http://demos.webmproject.org/exoplayer/glass.mp4
+            http://www.html5videoplayer.net/videos/toystory.mp4
+            */
+
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mediaPlayer.setLooping(true);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mediaPlayer.setLooping(true);
+        glRenderer=new GLRenderer(this,grid,mediaPlayer,player);//"android.resource://"+context.getPackageName()+"/raw/cat"
+        //GLSurfaceView glSurfaceView=findViewById(R.id.new_glsurfaceview);
+        //glSurfaceView.setEGLContextClientVersion(2);
+        //glSurfaceView.setRenderer(IGLassMainActivity.glRenderer);
+
+        //ePlayerView = new EPlayerView(this.getApplicationContext());
+        //ePlayerView.setSimpleExoPlayer(player,myGrid);
+        //ePlayerView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        //ePlayerView.onResume();
+        //ePlayerView.setGlFilter(FilterType.createGlFilter(filterType, videoViewFilterParams, getApplicationContext()));
+
     }
 
     private void castMovieToGlass() {

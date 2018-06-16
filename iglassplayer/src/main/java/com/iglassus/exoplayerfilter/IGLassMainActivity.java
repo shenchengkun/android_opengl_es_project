@@ -110,6 +110,7 @@ public class IGLassMainActivity extends Activity{
     private VideoViewFilterParams.FrameImgFormatEnum frameImgFormatEnum= VideoViewFilterParams.FrameImgFormatEnum.Format2D;
     private VideoViewFilterParams videoViewFilterParams=new VideoViewFilterParams(flip,distortion,frameImgFormatEnum,bsk_upperpadding_percentage,
             bsk_bottompadding_percentage,bsk_leftrightpadding_percentage,bsk_middlepadding_percentage,null);
+    private boolean is2D=true;
 
     private GridView gridView;
     public static SimpleExoPlayer player;
@@ -218,7 +219,7 @@ public class IGLassMainActivity extends Activity{
     private void releasePlayer() {
         //ePlayerView.onPause();
         //ePlayerView = null;
-        mediaPlayer.release();
+        //mediaPlayer.release();
         player.stop();
         player.release();
         player = null;
@@ -303,7 +304,6 @@ public class IGLassMainActivity extends Activity{
 
 
     private void setUpControlPanel() {
-        int i=0;
         playPause=findViewById(R.id.play_pause);
         stretch=findViewById(R.id.stretch);
         mode=findViewById(R.id.mode);
@@ -316,39 +316,44 @@ public class IGLassMainActivity extends Activity{
                 isPlaying = isPlaying ? false : true;
                 playPause.setBackgroundColor(isPlaying? Color.YELLOW:Color.TRANSPARENT);
                 player.setPlayWhenReady(isPlaying);
-                mediaPlayer.pause();
+                //mediaPlayer.pause();
                 //glRenderer.offset+=50;
             }
         });
         stretch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
+                //mediaPlayer.start();
                 if(is169){
-                    bsk_upperpadding_percentage = 0.0f;
-                    bsk_bottompadding_percentage = 0.0f;
+                    glRenderer.offset=0;
+                    //bsk_upperpadding_percentage = 0.0f;
+                    //bsk_bottompadding_percentage = 0.0f;
                     is169=false;
 
                 }else{
-                    bsk_upperpadding_percentage = 0.09f;
-                    bsk_bottompadding_percentage = 0.09f;
+                    glRenderer.offset=50;
+                    //bsk_upperpadding_percentage = 0.09f;
+                    //bsk_bottompadding_percentage = 0.09f;
                     is169=true;
                 }
 
                 stretch.setBackgroundColor(is169? Color.TRANSPARENT:Color.YELLOW);
-                videoViewFilterParams.setUpperPadding_percentage(bsk_upperpadding_percentage);
-                videoViewFilterParams.setBottomPadding_percentage(bsk_bottompadding_percentage);
+                //videoViewFilterParams.setUpperPadding_percentage(bsk_upperpadding_percentage);
+                //videoViewFilterParams.setBottomPadding_percentage(bsk_bottompadding_percentage);
                 //ePlayerView.setGlFilter(FilterType.createGlFilter(filterType, videoViewFilterParams, getApplicationContext()));
             }
         });
         mode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                frameImgFormatEnum= (frameImgFormatEnum==VideoViewFilterParams.FrameImgFormatEnum.Format2D)?
-                        VideoViewFilterParams.FrameImgFormatEnum.Format3D:VideoViewFilterParams.FrameImgFormatEnum.Format2D;
-                mode.setBackgroundColor(frameImgFormatEnum== VideoViewFilterParams.FrameImgFormatEnum.Format3D?Color.TRANSPARENT:Color.YELLOW);
-                videoViewFilterParams.setFrameImgFormat(frameImgFormatEnum);
+                //frameImgFormatEnum= (frameImgFormatEnum==VideoViewFilterParams.FrameImgFormatEnum.Format2D)?
+                //        VideoViewFilterParams.FrameImgFormatEnum.Format3D:VideoViewFilterParams.FrameImgFormatEnum.Format2D;
+                //mode.setBackgroundColor(frameImgFormatEnum== VideoViewFilterParams.FrameImgFormatEnum.Format3D?Color.TRANSPARENT:Color.YELLOW);
+                //videoViewFilterParams.setFrameImgFormat(frameImgFormatEnum);
                 //ePlayerView.setGlFilter(FilterType.createGlFilter(filterType, videoViewFilterParams, getApplicationContext()));
+                is2D=is2D?false:true;
+                glRenderer.is2D=is2D;
+                mode.setBackgroundColor(is2D?Color.YELLOW:Color.TRANSPARENT);
             }
         });
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -632,6 +637,7 @@ public class IGLassMainActivity extends Activity{
         if(frameImgFormatEnum==VideoViewFilterParams.FrameImgFormatEnum.Format3D){
             mode.performClick();
         }
+        if(!is2D) mode.performClick();
 
         player.setPlayWhenReady(true);
         isPlaying=true;
@@ -708,30 +714,30 @@ public class IGLassMainActivity extends Activity{
             e.printStackTrace();
         }
         Grid grid=new Grid(13,13);
+        glRenderer=new GLRenderer(this,grid,player);//"android.resource://"+context.getPackageName()+"/raw/cat"
         //Log.i("哈哈哈或或或或或或或或或或或或或或或",String.valueOf(grid.getHeight()));
         //MyGrid myGrid=new MyGrid(grid.getVertices(),grid.getTexels(),grid.getIndices(),grid.getIndicesCount());
-        mediaPlayer=new MediaPlayer();
-        try{
-            mediaPlayer.setDataSource(getApplicationContext(), Uri.fromFile(new File("/sdcard/cat.mp4")));
-            //Uri uri=Uri.parse("rtsp://r2---sn-a5m7zu76.c.youtube.com/Ck0LENy73wIaRAnTmlo5oUgpQhMYESARFEgGUg5yZWNvbW1lbmRhdGlvbnIhAWL2kyn64K6aQtkZVJdTxRoO88HsQjpE1a8d1GxQnGDmDA==/0/0/0/video.3gp");
-            //mediaPlayer.setDataSource("http://www.html5videoplayer.net/videos/toystory.mp4");
-
-            /*
-            https://ccs3.akamaized.net/cchanclips/a6164c61eddb455190330e05c6c91ca6/clip.mp4
-            http://demos.webmproject.org/exoplayer/glass.mp4
-            http://www.html5videoplayer.net/videos/toystory.mp4
-            */
-
-            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mediaPlayer.setLooping(true);
-            mediaPlayer.prepare();
-            mediaPlayer.start();
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mediaPlayer.setLooping(true);
-        glRenderer=new GLRenderer(this,grid,mediaPlayer,player);//"android.resource://"+context.getPackageName()+"/raw/cat"
+        //mediaPlayer=new MediaPlayer();
+        //try{
+        //    mediaPlayer.setDataSource(getApplicationContext(), Uri.fromFile(new File("/sdcard/cat.mp4")));
+        //    //Uri uri=Uri.parse("rtsp://r2---sn-a5m7zu76.c.youtube.com/Ck0LENy73wIaRAnTmlo5oUgpQhMYESARFEgGUg5yZWNvbW1lbmRhdGlvbnIhAWL2kyn64K6aQtkZVJdTxRoO88HsQjpE1a8d1GxQnGDmDA==/0/0/0/video.3gp");
+        //    //mediaPlayer.setDataSource("http://www.html5videoplayer.net/videos/toystory.mp4");
+//
+        //    /*
+        //    https://ccs3.akamaized.net/cchanclips/a6164c61eddb455190330e05c6c91ca6/clip.mp4
+        //    http://demos.webmproject.org/exoplayer/glass.mp4
+        //    http://www.html5videoplayer.net/videos/toystory.mp4
+        //    */
+//
+        //    mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        //    mediaPlayer.setLooping(true);
+        //    mediaPlayer.prepare();
+        //    //mediaPlayer.start();
+        //}catch (IOException e){
+        //    e.printStackTrace();
+        //}
+        //mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        //mediaPlayer.setLooping(true);
         //GLSurfaceView glSurfaceView=findViewById(R.id.new_glsurfaceview);
         //glSurfaceView.setEGLContextClientVersion(2);
         //glSurfaceView.setRenderer(IGLassMainActivity.glRenderer);

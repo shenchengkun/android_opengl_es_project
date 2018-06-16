@@ -12,6 +12,16 @@ import jxl.Sheet;
 public class Grid {
     private int height,width;
     float[] vertices, texels,verticesRight;
+    float[] leftTexels,rightTexels;
+
+    public float[] getLeftTexels() {
+        return leftTexels;
+    }
+
+    public float[] getRightTexels() {
+        return rightTexels;
+    }
+
     int[] indices;
 
     public Grid(int height, int width) {
@@ -92,6 +102,8 @@ public class Grid {
 
     private void initTexels() {
         texels = new float[height*width*2];
+        leftTexels = new float[height*width*2];
+        rightTexels = new float[height*width*2];
         int i = 0;
         float h = (float)height-1;
         float w = (float) width - 1;
@@ -99,8 +111,8 @@ public class Grid {
             float roww=row/h;
             for(int col = 0; col < width; col++) {
                 float coll=col/w;
-                texels[i++] = coll;
-                texels[i++] = roww;
+                texels[i] = coll;leftTexels[i]=texels[i]/2;rightTexels[i]=(texels[i]+1)/2;i++;
+                texels[i] = roww;leftTexels[i]=texels[i];rightTexels[i]=texels[i];i++;
             }
         }
     }

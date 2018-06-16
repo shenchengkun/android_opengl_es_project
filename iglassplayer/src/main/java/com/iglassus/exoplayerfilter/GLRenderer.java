@@ -31,6 +31,10 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class GLRenderer implements GLSurfaceView.Renderer, SurfaceTexture.OnFrameAvailableListener {
 
+    private final float[] leftTextureVertexData;
+    private final float[] rightTextureVertexData;
+    private final FloatBuffer leftTextureVertexBuffer;
+    private final FloatBuffer rightTextureVertexBuffer;
     private Grid grid;
     private int[] indiceData;
     private IntBuffer indiceBuffer;
@@ -55,17 +59,19 @@ public class GLRenderer implements GLSurfaceView.Renderer, SurfaceTexture.OnFram
     private boolean updateSurface;
     private boolean playerPrepared;
     private int screenWidth,screenHeight;
-    public int offset=0;
+    public boolean is2D=true;
+    public int offset=-0;
     private SimpleExoPlayer exoPlayer;
 
-    public GLRenderer(Context context, Grid grid, MediaPlayer mediaPlayer, SimpleExoPlayer player) {
+    public GLRenderer(Context context, Grid grid,SimpleExoPlayer player) {
         this.context = context;
         this.grid=grid;
-        this.mediaPlayer=mediaPlayer;
         this.exoPlayer=player;
 
         vertexData=grid.getVertices();
         textureVertexData=grid.getTexels();
+        leftTextureVertexData=grid.getLeftTexels();
+        rightTextureVertexData=grid.getRightTexels();
         indiceData=grid.getIndices();
         vertexBuffer = ByteBuffer.allocateDirect(vertexData.length * 4)
                 .order(ByteOrder.nativeOrder())
@@ -77,6 +83,16 @@ public class GLRenderer implements GLSurfaceView.Renderer, SurfaceTexture.OnFram
                 .asFloatBuffer()
                 .put(textureVertexData);
         textureVertexBuffer.position(0);
+        leftTextureVertexBuffer = ByteBuffer.allocateDirect(leftTextureVertexData.length * 4)
+                .order(ByteOrder.nativeOrder())
+                .asFloatBuffer()
+                .put(leftTextureVertexData);
+        leftTextureVertexBuffer.position(0);
+        rightTextureVertexBuffer = ByteBuffer.allocateDirect(rightTextureVertexData.length * 4)
+                .order(ByteOrder.nativeOrder())
+                .asFloatBuffer()
+                .put(rightTextureVertexData);
+        rightTextureVertexBuffer.position(0);
         indiceBuffer=ByteBuffer.allocateDirect(indiceData.length * 4)
                 .order(ByteOrder.nativeOrder())
                 .asIntBuffer()
@@ -110,11 +126,11 @@ public class GLRenderer implements GLSurfaceView.Renderer, SurfaceTexture.OnFram
 
         surfaceTexture = new SurfaceTexture(textureId);
         surfaceTexture.setOnFrameAvailableListener(this);
+        exoPlayer.setVideoSurface(new Surface(surfaceTexture));
 
-        Surface surface = new Surface(surfaceTexture);
-        mediaPlayer.setSurface(surface);
-        //exoPlayer.setVideoSurface(surface);
-        surface.release();
+        //Surface surface = new Surface(surfaceTexture);
+        //mediaPlayer.setSurface(surface);
+        //surface.release();
 
         //if (!playerPrepared){
         //    try {
@@ -148,14 +164,16 @@ public class GLRenderer implements GLSurfaceView.Renderer, SurfaceTexture.OnFram
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,textureId);
         //GLES20.glBindTexture(GL_TEXTURE_2D, textureId);
-        GLES20.glVertexAttribPointer(aTextureCoordHandle,2,GLES20.GL_FLOAT,false,8,textureVertexBuffer);
+        if(is2D) GLES20.glVertexAttribPointer(aTextureCoordHandle,2,GLES20.GL_FLOAT,false,8,textureVertexBuffer);
 
 ////////////////////////////////////Left///////////////////////////////////////////////
-        GLES20.glViewport(0,0+offset,screenWidth/2,screenHeight);
+        GLES20.glViewport(0,0+offset,screenWidth/2,screenHeight-2*offset);
+        if(!is2D) GLES20.glVertexAttribPointer(aTextureCoordHandle,2,GLES20.GL_FLOAT,false,8,leftTextureVertexBuffer);
         GLES20.glVertexAttribPointer(aPositionHandle, 3, GLES20.GL_FLOAT, false, 12, vertexBuffer);
         GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, grid.getIndicesCount(), GLES20.GL_UNSIGNED_INT, indiceBuffer);
 ////////////////////////////////////Right///////////////////////////////////////////////
-        GLES20.glViewport(screenWidth/2,0,screenWidth/2,screenHeight);
+        if(!is2D) GLES20.glVertexAttribPointer(aTextureCoordHandle,2,GLES20.GL_FLOAT,false,8,rightTextureVertexBuffer);
+        GLES20.glViewport(screenWidth/2,0+offset,screenWidth/2,screenHeight-2*offset);
         GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, grid.getIndicesCount(), GLES20.GL_UNSIGNED_INT, indiceBuffer);
     }
 

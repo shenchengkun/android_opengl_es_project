@@ -19,7 +19,7 @@ import java.io.File;
 
 public class DisplayPresentation extends Presentation {
     public static ViewGroup loadingView,pictureView;
-    public static MovieWrapperView movieWrapperView;
+    public static ViewGroup movieWrapperView;
     public static ImageView pic1,pic2;
     public static Context context;
     public GLSurfaceView glSurfaceView;
@@ -35,7 +35,7 @@ public class DisplayPresentation extends Presentation {
         setContentView(R.layout.iglass_screen);
 
         loadingView=findViewById(R.id.buffering_view);
-        //movieWrapperView=findViewById(R.id.layout_movie_wrapper_iGlass);
+        movieWrapperView=findViewById(R.id.layout_movie_wrapper_iGlass);
         //movieWrapperView.addView(IGLassMainActivity.ePlayerView);
 
         glSurfaceView=findViewById(R.id.new_glsurfaceview);
@@ -59,10 +59,10 @@ public class DisplayPresentation extends Presentation {
     public static void showLoadingView(){loadingView.setVisibility(View.VISIBLE);}
 
     public static void hideMovieView(){
-        //movieWrapperView.setVisibility(View.GONE);}
+        movieWrapperView.setVisibility(View.GONE);
     }
     public static void showMovieView(){
-        //movieWrapperView.setVisibility(View.VISIBLE);}
+        movieWrapperView.setVisibility(View.VISIBLE);
     }
 
     public static void hidePicView(){pictureView.setVisibility(View.GONE);}

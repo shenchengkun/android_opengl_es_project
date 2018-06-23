@@ -105,8 +105,8 @@ public class IGLassMainActivity extends Activity{
     private float bsk_leftrightpadding_percentage = 0.0f;
     private float bsk_middlepadding_percentage = 0.0f;
     private boolean flip=true;
-    private boolean distortion=false;
-    final static FilterType filterType = FilterType.IGLASS;
+    private boolean distortion=true;
+    //final static FilterType filterType = FilterType.IGLASS;
     private VideoViewFilterParams.FrameImgFormatEnum frameImgFormatEnum= VideoViewFilterParams.FrameImgFormatEnum.Format2D;
     private VideoViewFilterParams videoViewFilterParams=new VideoViewFilterParams(flip,distortion,frameImgFormatEnum,bsk_upperpadding_percentage,
             bsk_bottompadding_percentage,bsk_leftrightpadding_percentage,bsk_middlepadding_percentage,null);
@@ -166,6 +166,7 @@ public class IGLassMainActivity extends Activity{
     public static Workbook book;
     private MediaPlayer mediaPlayer;
     public static GLRenderer glRenderer;
+    private ImageView distortionCorrection;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -307,6 +308,7 @@ public class IGLassMainActivity extends Activity{
         playPause=findViewById(R.id.play_pause);
         stretch=findViewById(R.id.stretch);
         mode=findViewById(R.id.mode);
+        distortionCorrection=findViewById(R.id.distortion);
         seekBar = findViewById(R.id.seek_bar);
         movieDuration=findViewById(R.id.movie_duration);
 
@@ -354,6 +356,19 @@ public class IGLassMainActivity extends Activity{
                 is2D=is2D?false:true;
                 glRenderer.is2D=is2D;
                 mode.setBackgroundColor(is2D?Color.YELLOW:Color.TRANSPARENT);
+            }
+        });
+        distortionCorrection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //frameImgFormatEnum= (frameImgFormatEnum==VideoViewFilterParams.FrameImgFormatEnum.Format2D)?
+                //        VideoViewFilterParams.FrameImgFormatEnum.Format3D:VideoViewFilterParams.FrameImgFormatEnum.Format2D;
+                //mode.setBackgroundColor(frameImgFormatEnum== VideoViewFilterParams.FrameImgFormatEnum.Format3D?Color.TRANSPARENT:Color.YELLOW);
+                //videoViewFilterParams.setFrameImgFormat(frameImgFormatEnum);
+                //ePlayerView.setGlFilter(FilterType.createGlFilter(filterType, videoViewFilterParams, getApplicationContext()));
+                distortion=distortion?false:true;
+                glRenderer.distortion=distortion;
+                distortionCorrection.setBackgroundColor(distortion?Color.YELLOW:Color.TRANSPARENT);
             }
         });
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -705,15 +720,15 @@ public class IGLassMainActivity extends Activity{
         });
     }
     private void setUoGlPlayerView() {
-        try {
-            InputStream inputStream = getResources().openRawResource(R.raw.distortion_data);
-            book = Workbook.getWorkbook(inputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (BiffException e) {
-            e.printStackTrace();
-        }
-        Grid grid=new Grid(13,13);
+        //try {
+        //    InputStream inputStream = getResources().openRawResource(R.raw.distortion_data_20);
+        //    book = Workbook.getWorkbook(inputStream);
+        //} catch (IOException e) {
+        //    e.printStackTrace();
+        //} catch (BiffException e) {
+        //    e.printStackTrace();
+        //}
+        Grid grid=new Grid(51,51);
         glRenderer=new GLRenderer(this,grid,player);//"android.resource://"+context.getPackageName()+"/raw/cat"
         //Log.i("哈哈哈或或或或或或或或或或或或或或或",String.valueOf(grid.getHeight()));
         //MyGrid myGrid=new MyGrid(grid.getVertices(),grid.getTexels(),grid.getIndices(),grid.getIndicesCount());

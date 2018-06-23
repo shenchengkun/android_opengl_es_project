@@ -1,5 +1,4 @@
 package com.iglassus.exoplayerfilter;
-import jxl.Sheet;
 
 /**
  * Created by AdminUser on 3/14/2018.
@@ -11,8 +10,9 @@ import jxl.Sheet;
 
 public class Grid {
     private int height,width;
-    float[] vertices, texels,verticesRight;
+    float[] vertices, texels, verticesNoDistortion;
     float[] leftTexels,rightTexels;
+    float k1=0.0486f,b1=-k1,k2=0.135f,b2=0f;
 
     public float[] getLeftTexels() {
         return leftTexels;
@@ -44,8 +44,8 @@ public class Grid {
         return vertices;
     }
 
-    public float[] getVerticesRight() {
-        return verticesRight;
+    public float[] getVerticesNoDistortion() {
+        return verticesNoDistortion;
     }
 
     public float[] getTexels() {
@@ -59,23 +59,29 @@ public class Grid {
     private void initVertices() {
 
         vertices = new float[height*width*3];
-        verticesRight = new float[height*width*3];
+        verticesNoDistortion = new float[height*width*3];
         int i = 0;
-/*
+/**/
         //////////////////////////////normal//////////////////////////////
         float h = (float)height-1;
         float w = (float) width - 1;
         for(int row = 0; row < height; row++) {
             float roww=2*row/h-1;
+            //roww=k*(roww-1)+1;
+            float k=0.5f*((k2-k1)*roww+k2+k1);
+            float b=0.5f*((b2-b1)*roww+b2+b1);
             for(int col = 0; col < width; col++) {
                 float coll=2*col/w-1;
                 //vertices[i++] = coll/(2-row/(height-1));
-                vertices[i++] = coll;
-                vertices[i++] = roww;
-                vertices[i++] = 0.0f;
+                verticesNoDistortion[i]=coll;vertices[i++] = coll;
+                //vertices[i++] = roww-(row==0?ratioDown[col]:ratioUp[col]);
+                //vertices[i++] = roww-(0.135f*(coll*coll)-0.001f);
+                verticesNoDistortion[i]=roww;vertices[i++] = roww-(k*coll*coll+b);
+                verticesNoDistortion[i]=0.0f;vertices[i++] = 0.0f;
             }
         }
- *//*
+
+/*
         //////////////////////////////transform//////////////////////////////
         double r     = Math.sqrt(0.5*0.5 + 1.75*1.75);
         double theta = Math.atan2(1.75, -0.5);
@@ -84,19 +90,21 @@ public class Grid {
             r1 = r + row * r/ (height - 1) ;   //这个地方，r必须放在除号前面，否则算之前并不会自动转double导致真个结果一直为零~！！！！！！！
             for (int col = 0; col < width; col++) {
                 theta1=(Math.PI-2*theta)/(width-1)*col+theta;
-                vertices[i] = ((float) (r1*Math.cos(theta1))-1)/2;verticesRight[i]=vertices[i]+1;i++;
-                vertices[i] = (float) (r1*Math.sin(theta1)-2.75);verticesRight[i]=vertices[i];i++;
-                vertices[i] = 0.0f;verticesRight[i]=vertices[i];i++;
+                vertices[i] = ((float) (r1*Math.cos(theta1))-1)/2;verticesNoDistortion[i]=vertices[i]+1;i++;
+                vertices[i] = (float) (r1*Math.sin(theta1)-2.75);verticesNoDistortion[i]=vertices[i];i++;
+                vertices[i] = 0.0f;verticesNoDistortion[i]=vertices[i];i++;
             }
         } */
+/*
         Sheet sheet = IGLassMainActivity.book.getSheet(0);
-        for (int j=1;j<=169;j++){
-            Float x=Float.valueOf(sheet.getCell(16,j).getContents()),y=Float.valueOf(sheet.getCell(17,j).getContents());
-            vertices[i] = x;verticesRight[i]=vertices[i];i++;
-            vertices[i] = y;verticesRight[i]=vertices[i];i++;
-            vertices[i] = 0.0f;verticesRight[i]=vertices[i];i++;
+        for (int j=1;j<=441;j++){
+            Float x=Float.valueOf(sheet.getCell(1,j).getContents()),y=Float.valueOf(sheet.getCell(12,j).getContents());
+            vertices[i] = x;vertices[i] = ((j-1.0f)%21)/10-1;verticesNoDistortion[i]=vertices[i];i++;
+            vertices[i] = y;verticesNoDistortion[i]=vertices[i];i++;
+            vertices[i] = 0.0f;verticesNoDistortion[i]=vertices[i];i++;
             //Log.i("提取",String.valueOf(y));
         }
+        */
     }
 
 

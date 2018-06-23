@@ -114,6 +114,13 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:src="@drawable/mb_video"
+                        android:layout_weight="1"
+                        android:id="@+id/distortion"
+                        android:background="#FFFFFF00" />
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:src="@drawable/ic_screen_lock_rotation"
                         android:layout_weight="1"
                         android:id="@+id/lock"/>
@@ -144,6 +151,14 @@
                         android:textColor="#D87545"
                         android:layout_weight="1"
                         android:paddingLeft="20dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="distorted"
+                        android:textColor="#D87545"
+                        android:layout_weight="1"
+                        android:paddingLeft="20dp"
+                        />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

@@ -24,7 +24,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="tile"
-            android:textAppearance="@android:style/TextAppearance.Material.Large"
+            android:textAppearance="@android:style/TextAppearance.Material.Small"
             android:textColor="#ff000000"/>
 
         <TextView
@@ -33,7 +33,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="tile"
-            android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+            android:textAppearance="@android:style/TextAppearance.Material.Small" />
 
         <TextView
             android:id="@+id/duration"
@@ -41,7 +41,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="tile"
-            android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+            android:textAppearance="@android:style/TextAppearance.Material.Small" />
     </LinearLayout>
 
 </LinearLayout>

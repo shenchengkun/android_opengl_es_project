@@ -65,6 +65,7 @@ public class GLRenderer implements GLSurfaceView.Renderer, SurfaceTexture.OnFram
     public int offset=-0;
     private SimpleExoPlayer exoPlayer;
     public boolean distortion=true;
+    public boolean is169=false;
 
     public GLRenderer(Context context, Grid grid,SimpleExoPlayer player) {
         this.context = context;
@@ -176,13 +177,13 @@ public class GLRenderer implements GLSurfaceView.Renderer, SurfaceTexture.OnFram
         if(is2D) GLES20.glVertexAttribPointer(aTextureCoordHandle,2,GLES20.GL_FLOAT,false,8,textureVertexBuffer);
 
 ////////////////////////////////////Left///////////////////////////////////////////////
-        GLES20.glViewport(0,0+offset,screenWidth/2,screenHeight-2*offset);
+        GLES20.glViewport(0,0+(is169?offset:0),screenWidth/2,screenHeight-2*(is169?offset:0));
         if(!is2D) GLES20.glVertexAttribPointer(aTextureCoordHandle,2,GLES20.GL_FLOAT,false,8,leftTextureVertexBuffer);
         GLES20.glVertexAttribPointer(aPositionHandle, 3, GLES20.GL_FLOAT, false, 12, distortion?vertexBufferNoDis:vertexBuffer);
         GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, grid.getIndicesCount(), GLES20.GL_UNSIGNED_INT, indiceBuffer);
 ////////////////////////////////////Right///////////////////////////////////////////////
         if(!is2D) GLES20.glVertexAttribPointer(aTextureCoordHandle,2,GLES20.GL_FLOAT,false,8,rightTextureVertexBuffer);
-        GLES20.glViewport(screenWidth/2,0+offset,screenWidth/2,screenHeight-2*offset);
+        GLES20.glViewport(screenWidth/2,0+(is169?offset:0),screenWidth/2,screenHeight-2*(is169?offset:0));
         GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, grid.getIndicesCount(), GLES20.GL_UNSIGNED_INT, indiceBuffer);
     }
 
@@ -194,6 +195,7 @@ public class GLRenderer implements GLSurfaceView.Renderer, SurfaceTexture.OnFram
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         screenWidth=width; screenHeight=height;
+        offset=(int)(screenHeight*0.09);
         Log.d("获得屏幕尺寸哈哈哈哈或", "onSurfaceChanged width = " + width + "  height = " + height);
         //float ratio=width>height?
         //        (float)width/height:

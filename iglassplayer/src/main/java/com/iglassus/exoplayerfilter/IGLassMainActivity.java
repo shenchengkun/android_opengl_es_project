@@ -327,16 +327,18 @@ public class IGLassMainActivity extends Activity{
             public void onClick(View v) {
                 //mediaPlayer.start();
                 if(is169){
-                    glRenderer.offset=0;
+                    //glRenderer.offset=0;
                     //bsk_upperpadding_percentage = 0.0f;
                     //bsk_bottompadding_percentage = 0.0f;
+                    glRenderer.is169=false;
                     is169=false;
 
                 }else{
-                    glRenderer.offset=50;
+                    //glRenderer.offset=50;
                     //bsk_upperpadding_percentage = 0.09f;
                     //bsk_bottompadding_percentage = 0.09f;
                     is169=true;
+                    glRenderer.is169=true;
                 }
 
                 stretch.setBackgroundColor(is169? Color.TRANSPARENT:Color.YELLOW);
@@ -728,7 +730,7 @@ public class IGLassMainActivity extends Activity{
         //} catch (BiffException e) {
         //    e.printStackTrace();
         //}
-        Grid grid=new Grid(51,51);
+        Grid grid=new Grid(100,100);
         glRenderer=new GLRenderer(this,grid,player);//"android.resource://"+context.getPackageName()+"/raw/cat"
         //Log.i("哈哈哈或或或或或或或或或或或或或或或",String.valueOf(grid.getHeight()));
         //MyGrid myGrid=new MyGrid(grid.getVertices(),grid.getTexels(),grid.getIndices(),grid.getIndicesCount());

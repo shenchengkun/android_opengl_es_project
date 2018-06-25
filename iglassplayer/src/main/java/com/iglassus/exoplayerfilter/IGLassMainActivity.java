@@ -2,6 +2,8 @@ package com.iglassus.exoplayerfilter;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,6 +19,8 @@ import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PowerManager;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -70,9 +74,9 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.gms.plus.PlusShare;
-import com.iglassus.epf.EPlayerView;
-import com.iglassus.epf.MyGrid;
-import com.iglassus.epf.filter.VideoViewFilterParams;
+//import com.iglassus.epf.EPlayerView;
+//import com.iglassus.epf.MyGrid;
+//import com.iglassus.epf.filter.VideoViewFilterParams;
 import com.iglassus.exoplayerfilter.youtubeData.DeveloperKey;
 import com.iglassus.exoplayerfilter.youtubeData.EndlessRecyclerViewScrollListener;
 import com.iglassus.exoplayerfilter.youtubeData.ListAdapter;
@@ -107,14 +111,13 @@ public class IGLassMainActivity extends Activity{
     private boolean flip=true;
     private boolean distortion=true;
     //final static FilterType filterType = FilterType.IGLASS;
-    private VideoViewFilterParams.FrameImgFormatEnum frameImgFormatEnum= VideoViewFilterParams.FrameImgFormatEnum.Format2D;
-    private VideoViewFilterParams videoViewFilterParams=new VideoViewFilterParams(flip,distortion,frameImgFormatEnum,bsk_upperpadding_percentage,
-            bsk_bottompadding_percentage,bsk_leftrightpadding_percentage,bsk_middlepadding_percentage,null);
+    //private VideoViewFilterParams.FrameImgFormatEnum frameImgFormatEnum= VideoViewFilterParams.FrameImgFormatEnum.Format2D;
+    //private VideoViewFilterParams videoViewFilterParams=new VideoViewFilterParams(flip,distortion,frameImgFormatEnum,bsk_upperpadding_percentage,bsk_bottompadding_percentage,bsk_leftrightpadding_percentage,bsk_middlepadding_percentage,null);
     private boolean is2D=true;
 
     private GridView gridView;
     public static SimpleExoPlayer player;
-    public static EPlayerView ePlayerView;
+    //public static EPlayerView ePlayerView;
 
     private DefaultDataSourceFactory dataSourceFactory;
     private DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
@@ -167,6 +170,8 @@ public class IGLassMainActivity extends Activity{
     private MediaPlayer mediaPlayer;
     public static GLRenderer glRenderer;
     private ImageView distortionCorrection;
+    private PowerManager.WakeLock wakeLock = null;
+    private PowerManager pm;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -195,6 +200,7 @@ public class IGLassMainActivity extends Activity{
         if (noHDMI) return;
         releasePlayer();
         if (glassService != null) stopService(glassService);
+        if(wakeLock!=null) wakeLock.release();
 
     }
 
@@ -325,6 +331,7 @@ public class IGLassMainActivity extends Activity{
         stretch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                distortionCorrection.performClick();
                 //mediaPlayer.start();
                 if(is169){
                     //glRenderer.offset=0;
@@ -428,12 +435,22 @@ public class IGLassMainActivity extends Activity{
         maxVolume = audiomanager.getStreamMaxVolume(AudioManager.STREAM_MUSIC); // 获取系统最大音量
         currentVolume = audiomanager.getStreamVolume(AudioManager.STREAM_MUSIC); // 获取当前值
         /** 获取视频播放窗口的尺寸 */
+
+        pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
+        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PostLocationService");
+        wakeLock.acquire();
+
         lock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 findViewById(R.id.home_view).setVisibility(View.GONE);
                 unlock.setVisibility(View.GONE);
                 touchEventView.setVisibility(View.VISIBLE);
+
+                wakeLock.release();
+                //pm.goToSleep(SystemClock.uptimeMillis());
+                //wakeLock = pm.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK, "PostLocationService");
+                //wakeLock.acquire();
             }
         });
         ViewTreeObserver viewObserver = touchEventView.getViewTreeObserver();
@@ -450,6 +467,11 @@ public class IGLassMainActivity extends Activity{
             public void onClick(View v) {
                 findViewById(R.id.home_view).setVisibility(View.VISIBLE);
                 touchEventView.setVisibility(View.GONE);
+
+                wakeLock.acquire();
+                //wakeLock.release();
+                //wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "PostLocationService");
+                //wakeLock.acquire();
             }
         });
         gestureDetector=new GestureDetector(this, new GestureDetector.OnGestureListener() {
@@ -651,9 +673,9 @@ public class IGLassMainActivity extends Activity{
         if(is169){
             stretch.performClick();
         }
-        if(frameImgFormatEnum==VideoViewFilterParams.FrameImgFormatEnum.Format3D){
-            mode.performClick();
-        }
+        //if(frameImgFormatEnum==VideoViewFilterParams.FrameImgFormatEnum.Format3D){
+        //    mode.performClick();
+        //}
         if(!is2D) mode.performClick();
 
         player.setPlayWhenReady(true);
@@ -730,7 +752,7 @@ public class IGLassMainActivity extends Activity{
         //} catch (BiffException e) {
         //    e.printStackTrace();
         //}
-        Grid grid=new Grid(100,100);
+        Grid grid=new Grid(50,50);
         glRenderer=new GLRenderer(this,grid,player);//"android.resource://"+context.getPackageName()+"/raw/cat"
         //Log.i("哈哈哈或或或或或或或或或或或或或或或",String.valueOf(grid.getHeight()));
         //MyGrid myGrid=new MyGrid(grid.getVertices(),grid.getTexels(),grid.getIndices(),grid.getIndicesCount());

@@ -12,7 +12,7 @@ public class Grid {
     private int height,width;
     float[] vertices, texels, verticesNoDistortion;
     float[] leftTexels,rightTexels;
-    float k1=0.0586f,b1=-k1,k2=0.155f,b2=0f;
+    float k1=0.0686f,b1=-k1,k2=0.165f,b2=0f;
 
     public float[] getLeftTexels() {
         return leftTexels;

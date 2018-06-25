@@ -1,3 +1,4 @@
+precision highp float;
 attribute vec4 aPosition;
 attribute vec4 aTexCoord;
 varying vec2 vTexCoord;

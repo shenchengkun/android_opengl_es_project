@@ -692,7 +692,7 @@ public class IGLassMainActivity extends Activity{
         player.setRepeatMode(Player.REPEAT_MODE_ONE);
         player.addListener(new Player.EventListener() {
             @Override
-            public void onTimelineChanged(Timeline timeline, Object manifest) {
+            public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
 
             }
 

@@ -1,1 +1,1 @@
-include ':iglassplayer', ':epf'
+include ':iglassplayer'

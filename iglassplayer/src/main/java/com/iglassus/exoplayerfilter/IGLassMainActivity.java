@@ -172,6 +172,7 @@ public class IGLassMainActivity extends Activity{
     private ImageView distortionCorrection;
     private PowerManager.WakeLock wakeLock = null;
     private PowerManager pm;
+    private boolean isLock;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -193,6 +194,11 @@ public class IGLassMainActivity extends Activity{
         newSearch();
     }
 
+    //public void finish() {
+    //    if(!noHDMI){
+    //        moveTaskToBack(true);
+    //    }else super.finish(); //记住不要执行此句
+    //}
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -200,7 +206,7 @@ public class IGLassMainActivity extends Activity{
         if (noHDMI) return;
         releasePlayer();
         if (glassService != null) stopService(glassService);
-        if(wakeLock!=null) wakeLock.release();
+        //if(wakeLock!=null) wakeLock.release();
 
     }
 
@@ -424,6 +430,19 @@ public class IGLassMainActivity extends Activity{
         playerTimer.start();
     }
 
+    private void screenOff() {
+        DevicePolicyManager policyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+        ComponentName adminReceiver = new ComponentName(this, ScreenOffAdminReceiver.class);
+        boolean admin = policyManager.isAdminActive(adminReceiver);
+        if (admin) {
+            //isScreenOn = false;
+            policyManager.lockNow();
+        } else {
+            Toast.makeText(this, "没有设备管理权限",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
 
     private void setUpLockScreen() {
         lock=findViewById(R.id.lock);
@@ -436,10 +455,22 @@ public class IGLassMainActivity extends Activity{
         currentVolume = audiomanager.getStreamVolume(AudioManager.STREAM_MUSIC); // 获取当前值
         /** 获取视频播放窗口的尺寸 */
 
-        pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
-        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PostLocationService");
-        wakeLock.acquire();
+        //isLock=false;
+        //pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
+        //wakeLock = pm.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK, "PostLocationService");
+        //wakeLock.acquire();
 
+        //findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {
+        //    @Override
+        //    public void onClick(View v) {
+        //        Log.i("关闭屏幕","关闭屏幕");
+        //        //if(!isLock) wakeLock.release();
+        //        //else  wakeLock.acquire();
+        //        //isLock=isLock?false:true;
+        //        //screenOff();
+        //        //Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, 0);
+        //    }
+        //});
         lock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -447,19 +478,14 @@ public class IGLassMainActivity extends Activity{
                 unlock.setVisibility(View.GONE);
                 touchEventView.setVisibility(View.VISIBLE);
 
-                wakeLock.release();
+                //wakeLock.release();
                 //pm.goToSleep(SystemClock.uptimeMillis());
                 //wakeLock = pm.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK, "PostLocationService");
                 //wakeLock.acquire();
-            }
-        });
-        ViewTreeObserver viewObserver = touchEventView.getViewTreeObserver();
-        viewObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                touchEventView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                playerWidth = touchEventView.getWidth();
-                playerHeight = touchEventView.getHeight();
+                //screenOff();
+                WindowManager.LayoutParams layout = getWindow().getAttributes();
+                layout.screenBrightness = 0F;
+                getWindow().setAttributes(layout);
             }
         });
         unlock.setOnClickListener(new View.OnClickListener() {
@@ -468,10 +494,25 @@ public class IGLassMainActivity extends Activity{
                 findViewById(R.id.home_view).setVisibility(View.VISIBLE);
                 touchEventView.setVisibility(View.GONE);
 
-                wakeLock.acquire();
+                //wakeLock.acquire();
                 //wakeLock.release();
                 //wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "PostLocationService");
                 //wakeLock.acquire();
+
+
+                WindowManager.LayoutParams layout = getWindow().getAttributes();
+                layout.screenBrightness = -1F;
+                getWindow().setAttributes(layout);
+            }
+        });
+
+        ViewTreeObserver viewObserver = touchEventView.getViewTreeObserver();
+        viewObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                touchEventView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                playerWidth = touchEventView.getWidth();
+                playerHeight = touchEventView.getHeight();
             }
         });
         gestureDetector=new GestureDetector(this, new GestureDetector.OnGestureListener() {

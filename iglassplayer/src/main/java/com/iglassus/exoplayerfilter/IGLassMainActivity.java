@@ -184,6 +184,10 @@ public class IGLassMainActivity extends Activity{
             return;
         }
 
+        //重写的话，就用3个fragment，各自控制home, youtube, lock screen 的UI。复杂视频投射的service和视频处理则完全在activity里面实现。
+        //YouTube的话还有网络请求，这部分可以考虑mvp架构。
+        // 3个fragment都需要不停的和activity交互以便控制视频嘛,其实presentation也应该看成一个fragment，控制着glass上的UI
+        //service作为presentation的容器存在，实际控制端应该还是activity
         setUpSimpleExoPlayer();
         setUoGlPlayerView();
         setUpControlPanel();
@@ -206,8 +210,10 @@ public class IGLassMainActivity extends Activity{
         if (noHDMI) return;
         releasePlayer();
         if (glassService != null) stopService(glassService);
-        //if(wakeLock!=null) wakeLock.release();
-
+        if(wakeLock!=null) {
+            wakeLock.release();
+            wakeLock=null;
+        }
     }
 
     @Override
@@ -456,9 +462,13 @@ public class IGLassMainActivity extends Activity{
         /** 获取视频播放窗口的尺寸 */
 
         //isLock=false;
-        //pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
-        //wakeLock = pm.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK, "PostLocationService");
-        //wakeLock.acquire();
+        if(wakeLock==null) {
+            pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
+            wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK
+                            | PowerManager.ON_AFTER_RELEASE,
+                    this.getClass().getCanonicalName());
+            wakeLock.acquire();
+        }
 
         //findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {
         //    @Override

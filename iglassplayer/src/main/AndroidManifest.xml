@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.iglassus.exoplayerfilter">
+    package="com.iglassus.iglassvideoplayer">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -28,7 +28,7 @@
         android:supportsRtl="true"
         >
 
-        <activity android:name=".IGLassMainActivity"
+        <activity android:name="com.iglassus.iglassvideoplayer.IGLassMainActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
@@ -39,28 +39,14 @@
             </intent-filter>
         </activity>
 
-        <service android:enabled="true"  android:name=".IGlassService"/>
+        <service android:enabled="true"  android:name="com.iglassus.iglassvideoplayer.IGlassService"/>
 
-        <receiver android:name=".UsbChangeNotification">
+        <receiver android:name="com.iglassus.iglassvideoplayer.UsbChangeNotification">
             <intent-filter>
                 <action android:name="android.intent.action.HDMI_PLUGGED" />
                 <action android:name="android.hardware.usb.action.USB_STATE"/>
             </intent-filter>
         </receiver>
-
-        <receiver
-            android:name=".ScreenOffAdminReceiver"
-            android:label="@string/app_name"
-            android:permission="android.permission.BIND_DEVICE_ADMIN" >
-            <meta-data
-                android:name="android.app.device_admin"
-                android:resource="@xml/device_admin" />
-
-            <intent-filter>
-                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
-            </intent-filter>
-        </receiver>
-
     </application>
 
 </manifest>

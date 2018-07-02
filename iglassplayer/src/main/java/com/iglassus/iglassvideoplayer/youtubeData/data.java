@@ -1,4 +1,4 @@
-package com.iglassus.exoplayerfilter.youtubeData;
+package com.iglassus.iglassvideoplayer.youtubeData;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -25,16 +25,7 @@ public class data {
     public Bitmap myBitmap;
     public String title;
     public int type;
-    boolean unlocked = false;
     public View view;
-
-    public boolean isUnlocked() {
-        return this.unlocked;
-    }
-
-    public void setUnlocked(boolean unlocked) {
-        this.unlocked = unlocked;
-    }
 
     String getDateFomart(String dateparsed) {
         Date result = null;

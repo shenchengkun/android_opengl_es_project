@@ -1,4 +1,4 @@
-package com.iglassus.exoplayerfilter;
+package com.iglassus.iglassvideoplayer;
 
 /**
  * Created by AdminUser on 3/14/2018.
@@ -10,13 +10,11 @@ import android.media.MediaPlayer;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.opengl.Matrix;
 import android.util.Log;
 import android.view.Surface;
 
 import com.google.android.exoplayer2.SimpleExoPlayer;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -137,21 +135,6 @@ public class GLRenderer implements GLSurfaceView.Renderer, SurfaceTexture.OnFram
         surfaceTexture = new SurfaceTexture(textureId);
         surfaceTexture.setOnFrameAvailableListener(this);
         exoPlayer.setVideoSurface(new Surface(surfaceTexture));
-
-        //Surface surface = new Surface(surfaceTexture);
-        //mediaPlayer.setSurface(surface);
-        //surface.release();
-
-        //if (!playerPrepared){
-        //    try {
-        //        mediaPlayer.prepare();
-        //        playerPrepared=true;
-        //    } catch (IOException t) {
-        //        Log.e(TAG, "media player prepare failed");
-        //    }
-        //    mediaPlayer.start();
-        //    playerPrepared=true;
-        //}
     }
 
 
@@ -197,12 +180,5 @@ public class GLRenderer implements GLSurfaceView.Renderer, SurfaceTexture.OnFram
         screenWidth=width; screenHeight=height;
         offset=(int)(screenHeight*0.09);
         Log.d("获得屏幕尺寸哈哈哈哈或", "onSurfaceChanged width = " + width + "  height = " + height);
-        //float ratio=width>height?
-        //        (float)width/height:
-        //        (float)height/width;
-        //Matrix.orthoM(projectionMatrix,0,-1f,1f,-1f,1f,-1f,1f);
-        //if (width>height){
-        //    Matrix.orthoM(projectionMatrix,0,-1,1,-1f,1f,-1f,1f);
-        //}else Matrix.orthoM(projectionMatrix,0,-1f,1f,-ratio,ratio,-1f,1f);
     }
 }

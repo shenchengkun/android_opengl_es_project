@@ -1,4 +1,4 @@
-package com.iglassus.exoplayerfilter;
+package com.iglassus.iglassvideoplayer;
 
 /**
  * Created by AdminUser on 3/14/2018.

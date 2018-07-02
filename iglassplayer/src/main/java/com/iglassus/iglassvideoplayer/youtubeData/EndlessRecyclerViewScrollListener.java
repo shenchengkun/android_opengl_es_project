@@ -1,4 +1,4 @@
-package com.iglassus.exoplayerfilter.youtubeData;
+package com.iglassus.iglassvideoplayer.youtubeData;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;

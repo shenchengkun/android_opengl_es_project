@@ -1,4 +1,4 @@
-package com.iglassus.exoplayerfilter.youtubeData;
+package com.iglassus.iglassvideoplayer.youtubeData;
 
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
@@ -10,7 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.iglassus.exoplayerfilter.R;
+import com.iglassus.iglassvideoplayer.R;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 
@@ -32,8 +32,6 @@ public class ListAdapter extends Adapter<ListAdapter.ListHolder> {
             super(itemView);
             this.image = (ImageView) itemView.findViewById(R.id.image);
             this.title = (TextView) itemView.findViewById(R.id.title);
-            //this.channel = (TextView) itemView.findViewById(R.id.channel);
-            //this.playlist = (ImageView) itemView.findViewById(R.id.playlist);
             this.dates = (TextView) itemView.findViewById(R.id.date);
             this.duration = (TextView) itemView.findViewById(R.id.duration);
         }

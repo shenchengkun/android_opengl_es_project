@@ -50,7 +50,6 @@
                 android:layout_centerInParent="true"
                 android:layout_below="@id/loadingIcon"
                 android:layout_centerHorizontal="true"
-                android:id="@+id/loadingText"
                 android:textSize="30dp"
                 android:scaleX="-1"/>
 
@@ -75,7 +74,6 @@
                 android:layout_centerInParent="true"
                 android:layout_below="@id/loadingIcon1"
                 android:layout_centerHorizontal="true"
-                android:id="@+id/loadingText1"
                 android:textSize="30dp"
                 android:scaleX="-1"/>
 
@@ -94,14 +92,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/cat"
+            android:src="@drawable/ic_play"
             android:id="@+id/pic1"
             android:scaleType="fitXY"/>
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/cat"
+            android:src="@drawable/ic_play"
             android:id="@+id/pic2"
             android:scaleType="fitXY"/>
     </LinearLayout>

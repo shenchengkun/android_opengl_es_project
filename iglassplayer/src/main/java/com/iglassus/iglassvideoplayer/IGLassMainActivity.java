@@ -1,9 +1,7 @@
-package com.iglassus.exoplayerfilter;
+package com.iglassus.iglassvideoplayer;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.admin.DevicePolicyManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,19 +13,16 @@ import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Display;
@@ -44,7 +39,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -74,13 +68,9 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.gms.plus.PlusShare;
-//import com.iglassus.epf.EPlayerView;
-//import com.iglassus.epf.MyGrid;
-//import com.iglassus.epf.filter.VideoViewFilterParams;
-import com.iglassus.exoplayerfilter.youtubeData.DeveloperKey;
-import com.iglassus.exoplayerfilter.youtubeData.EndlessRecyclerViewScrollListener;
-import com.iglassus.exoplayerfilter.youtubeData.ListAdapter;
-import com.iglassus.exoplayerfilter.youtubeData.data;
+import com.iglassus.iglassvideoplayer.youtubeData.EndlessRecyclerViewScrollListener;
+import com.iglassus.iglassvideoplayer.youtubeData.ListAdapter;
+import com.iglassus.iglassvideoplayer.youtubeData.data;
 
 import org.apache.commons.lang3.CharEncoding;
 import org.json.JSONArray;
@@ -89,7 +79,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -97,27 +86,18 @@ import java.util.List;
 
 import at.huber.youtubeExtractor.YouTubeUriExtractor;
 import at.huber.youtubeExtractor.YtFile;
-import jxl.Workbook;
-import jxl.read.biff.BiffException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class IGLassMainActivity extends Activity{
-    private float bsk_upperpadding_percentage = 0.0f;
-    private float bsk_bottompadding_percentage = 0.0f;
-    private float bsk_leftrightpadding_percentage = 0.0f;
-    private float bsk_middlepadding_percentage = 0.0f;
     private boolean flip=true;
     private boolean distortion=true;
-    //final static FilterType filterType = FilterType.IGLASS;
-    //private VideoViewFilterParams.FrameImgFormatEnum frameImgFormatEnum= VideoViewFilterParams.FrameImgFormatEnum.Format2D;
-    //private VideoViewFilterParams videoViewFilterParams=new VideoViewFilterParams(flip,distortion,frameImgFormatEnum,bsk_upperpadding_percentage,bsk_bottompadding_percentage,bsk_leftrightpadding_percentage,bsk_middlepadding_percentage,null);
     private boolean is2D=true;
 
+    public static final String AcessToken = "TokenIDVRAcess";
     private GridView gridView;
     public static SimpleExoPlayer player;
-    //public static EPlayerView ePlayerView;
 
     private DefaultDataSourceFactory dataSourceFactory;
     private DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
@@ -166,7 +146,6 @@ public class IGLassMainActivity extends Activity{
     private SharedPreferences pref;
     private RecyclerView mRecyclerView;
     private ListAdapter mAdapter;
-    public static Workbook book;
     private MediaPlayer mediaPlayer;
     public static GLRenderer glRenderer;
     private ImageView distortionCorrection;
@@ -198,11 +177,6 @@ public class IGLassMainActivity extends Activity{
         newSearch();
     }
 
-    //public void finish() {
-    //    if(!noHDMI){
-    //        moveTaskToBack(true);
-    //    }else super.finish(); //记住不要执行此句
-    //}
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -236,9 +210,6 @@ public class IGLassMainActivity extends Activity{
     }
 
     private void releasePlayer() {
-        //ePlayerView.onPause();
-        //ePlayerView = null;
-        //mediaPlayer.release();
         player.stop();
         player.release();
         player = null;
@@ -346,34 +317,20 @@ public class IGLassMainActivity extends Activity{
                 distortionCorrection.performClick();
                 //mediaPlayer.start();
                 if(is169){
-                    //glRenderer.offset=0;
-                    //bsk_upperpadding_percentage = 0.0f;
-                    //bsk_bottompadding_percentage = 0.0f;
                     glRenderer.is169=false;
                     is169=false;
 
                 }else{
-                    //glRenderer.offset=50;
-                    //bsk_upperpadding_percentage = 0.09f;
-                    //bsk_bottompadding_percentage = 0.09f;
                     is169=true;
                     glRenderer.is169=true;
                 }
 
                 stretch.setBackgroundColor(is169? Color.TRANSPARENT:Color.YELLOW);
-                //videoViewFilterParams.setUpperPadding_percentage(bsk_upperpadding_percentage);
-                //videoViewFilterParams.setBottomPadding_percentage(bsk_bottompadding_percentage);
-                //ePlayerView.setGlFilter(FilterType.createGlFilter(filterType, videoViewFilterParams, getApplicationContext()));
             }
         });
         mode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //frameImgFormatEnum= (frameImgFormatEnum==VideoViewFilterParams.FrameImgFormatEnum.Format2D)?
-                //        VideoViewFilterParams.FrameImgFormatEnum.Format3D:VideoViewFilterParams.FrameImgFormatEnum.Format2D;
-                //mode.setBackgroundColor(frameImgFormatEnum== VideoViewFilterParams.FrameImgFormatEnum.Format3D?Color.TRANSPARENT:Color.YELLOW);
-                //videoViewFilterParams.setFrameImgFormat(frameImgFormatEnum);
-                //ePlayerView.setGlFilter(FilterType.createGlFilter(filterType, videoViewFilterParams, getApplicationContext()));
                 is2D=is2D?false:true;
                 glRenderer.is2D=is2D;
                 mode.setBackgroundColor(is2D?Color.YELLOW:Color.TRANSPARENT);
@@ -382,11 +339,6 @@ public class IGLassMainActivity extends Activity{
         distortionCorrection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //frameImgFormatEnum= (frameImgFormatEnum==VideoViewFilterParams.FrameImgFormatEnum.Format2D)?
-                //        VideoViewFilterParams.FrameImgFormatEnum.Format3D:VideoViewFilterParams.FrameImgFormatEnum.Format2D;
-                //mode.setBackgroundColor(frameImgFormatEnum== VideoViewFilterParams.FrameImgFormatEnum.Format3D?Color.TRANSPARENT:Color.YELLOW);
-                //videoViewFilterParams.setFrameImgFormat(frameImgFormatEnum);
-                //ePlayerView.setGlFilter(FilterType.createGlFilter(filterType, videoViewFilterParams, getApplicationContext()));
                 distortion=distortion?false:true;
                 glRenderer.distortion=distortion;
                 distortionCorrection.setBackgroundColor(distortion?Color.YELLOW:Color.TRANSPARENT);
@@ -436,20 +388,6 @@ public class IGLassMainActivity extends Activity{
         playerTimer.start();
     }
 
-    private void screenOff() {
-        DevicePolicyManager policyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-        ComponentName adminReceiver = new ComponentName(this, ScreenOffAdminReceiver.class);
-        boolean admin = policyManager.isAdminActive(adminReceiver);
-        if (admin) {
-            //isScreenOn = false;
-            policyManager.lockNow();
-        } else {
-            Toast.makeText(this, "没有设备管理权限",
-                    Toast.LENGTH_LONG).show();
-        }
-    }
-
-
     private void setUpLockScreen() {
         lock=findViewById(R.id.lock);
         touchEventView =findViewById(R.id.touch_event_view);
@@ -470,17 +408,6 @@ public class IGLassMainActivity extends Activity{
             wakeLock.acquire();
         }
 
-        //findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {
-        //    @Override
-        //    public void onClick(View v) {
-        //        Log.i("关闭屏幕","关闭屏幕");
-        //        //if(!isLock) wakeLock.release();
-        //        //else  wakeLock.acquire();
-        //        //isLock=isLock?false:true;
-        //        //screenOff();
-        //        //Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, 0);
-        //    }
-        //});
         lock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -488,11 +415,6 @@ public class IGLassMainActivity extends Activity{
                 unlock.setVisibility(View.GONE);
                 touchEventView.setVisibility(View.VISIBLE);
 
-                //wakeLock.release();
-                //pm.goToSleep(SystemClock.uptimeMillis());
-                //wakeLock = pm.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK, "PostLocationService");
-                //wakeLock.acquire();
-                //screenOff();
                 WindowManager.LayoutParams layout = getWindow().getAttributes();
                 layout.screenBrightness = 0F;
                 getWindow().setAttributes(layout);
@@ -503,12 +425,6 @@ public class IGLassMainActivity extends Activity{
             public void onClick(View v) {
                 findViewById(R.id.home_view).setVisibility(View.VISIBLE);
                 touchEventView.setVisibility(View.GONE);
-
-                //wakeLock.acquire();
-                //wakeLock.release();
-                //wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "PostLocationService");
-                //wakeLock.acquire();
-
 
                 WindowManager.LayoutParams layout = getWindow().getAttributes();
                 layout.screenBrightness = -1F;
@@ -724,9 +640,7 @@ public class IGLassMainActivity extends Activity{
         if(is169){
             stretch.performClick();
         }
-        //if(frameImgFormatEnum==VideoViewFilterParams.FrameImgFormatEnum.Format3D){
-        //    mode.performClick();
-        //}
+
         if(!is2D) mode.performClick();
 
         player.setPlayWhenReady(true);
@@ -795,49 +709,8 @@ public class IGLassMainActivity extends Activity{
         });
     }
     private void setUoGlPlayerView() {
-        //try {
-        //    InputStream inputStream = getResources().openRawResource(R.raw.distortion_data_20);
-        //    book = Workbook.getWorkbook(inputStream);
-        //} catch (IOException e) {
-        //    e.printStackTrace();
-        //} catch (BiffException e) {
-        //    e.printStackTrace();
-        //}
         Grid grid=new Grid(50,50);
         glRenderer=new GLRenderer(this,grid,player);//"android.resource://"+context.getPackageName()+"/raw/cat"
-        //Log.i("哈哈哈或或或或或或或或或或或或或或或",String.valueOf(grid.getHeight()));
-        //MyGrid myGrid=new MyGrid(grid.getVertices(),grid.getTexels(),grid.getIndices(),grid.getIndicesCount());
-        //mediaPlayer=new MediaPlayer();
-        //try{
-        //    mediaPlayer.setDataSource(getApplicationContext(), Uri.fromFile(new File("/sdcard/cat.mp4")));
-        //    //Uri uri=Uri.parse("rtsp://r2---sn-a5m7zu76.c.youtube.com/Ck0LENy73wIaRAnTmlo5oUgpQhMYESARFEgGUg5yZWNvbW1lbmRhdGlvbnIhAWL2kyn64K6aQtkZVJdTxRoO88HsQjpE1a8d1GxQnGDmDA==/0/0/0/video.3gp");
-        //    //mediaPlayer.setDataSource("http://www.html5videoplayer.net/videos/toystory.mp4");
-//
-        //    /*
-        //    https://ccs3.akamaized.net/cchanclips/a6164c61eddb455190330e05c6c91ca6/clip.mp4
-        //    http://demos.webmproject.org/exoplayer/glass.mp4
-        //    http://www.html5videoplayer.net/videos/toystory.mp4
-        //    */
-//
-        //    mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        //    mediaPlayer.setLooping(true);
-        //    mediaPlayer.prepare();
-        //    //mediaPlayer.start();
-        //}catch (IOException e){
-        //    e.printStackTrace();
-        //}
-        //mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        //mediaPlayer.setLooping(true);
-        //GLSurfaceView glSurfaceView=findViewById(R.id.new_glsurfaceview);
-        //glSurfaceView.setEGLContextClientVersion(2);
-        //glSurfaceView.setRenderer(IGLassMainActivity.glRenderer);
-
-        //ePlayerView = new EPlayerView(this.getApplicationContext());
-        //ePlayerView.setSimpleExoPlayer(player,myGrid);
-        //ePlayerView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        //ePlayerView.onResume();
-        //ePlayerView.setGlFilter(FilterType.createGlFilter(filterType, videoViewFilterParams, getApplicationContext()));
-
     }
 
     private void castMovieToGlass() {
@@ -864,7 +737,7 @@ public class IGLassMainActivity extends Activity{
     }
 
     ////////////////All below are for youtube playing////////////////////////
-    private class RunTask extends AsyncTask<String,String,List<data>> {
+    private class RunTask extends AsyncTask<String,String,List<data>> {//内存泄漏（改static）有待提高
         List<data> myData;
         boolean prescroll;
 
@@ -923,7 +796,7 @@ public class IGLassMainActivity extends Activity{
             }
             try {
                 JSONArray items = new JSONObject(IGLassMainActivity.this.getJson("https://www.googleapis.com/youtube/v3/videos?" + IGLassMainActivity.MyAcessTokenData +
-                        IGLassMainActivity.this.pref.getString(DeveloperKey.AcessToken, "none") + "&" + "part=contentDetails,statistics" + "&" + "id=" + idDuration + "&" +
+                        IGLassMainActivity.this.pref.getString(AcessToken, "none") + "&" + "part=contentDetails,statistics" + "&" + "id=" + idDuration + "&" +
                         "key=AIzaSyA6Sp0Jo0PdZmY0VYXwDSGsTk16yHcjEYA")).getJSONArray("items");
                 int kk = 0;
                 for (i = 0; i < this.myData.size(); i++) {
@@ -1076,7 +949,7 @@ public class IGLassMainActivity extends Activity{
             if (this.pages.size() >= page) {
                 pg = this.pages.size() - 1;
             }
-            url = "https://www.googleapis.com/youtube/v3/search?" + MyAcessTokenData + this.pref.getString(DeveloperKey.AcessToken, "none") + "&" + "part=snippet"
+            url = "https://www.googleapis.com/youtube/v3/search?" + MyAcessTokenData + this.pref.getString(AcessToken, "none") + "&" + "part=snippet"
                     + "&" + "pageToken=" + this.pages.get(pg) + "&" + "maxResults=20" + "&" + "q=" + URLEncoder.encode(curString, CharEncoding.UTF_8) + "&" + "key=AIzaSyA6Sp0Jo0PdZmY0VYXwDSGsTk16yHcjEYA";
             return url;
         } catch (UnsupportedEncodingException e) {

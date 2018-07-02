@@ -1,4 +1,4 @@
-package com.iglassus.exoplayerfilter;
+package com.iglassus.iglassvideoplayer;
 
 import android.content.Context;
 import android.view.LayoutInflater;

@@ -1,4 +1,4 @@
-package com.iglassus.exoplayerfilter;
+package com.iglassus.iglassvideoplayer;
 
 import android.app.Presentation;
 import android.content.Context;
@@ -42,14 +42,6 @@ public class DisplayPresentation extends Presentation {
         glSurfaceView.setEGLContextClientVersion(2);
         glSurfaceView.setRenderer(IGLassMainActivity.glRenderer);
         glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-        //IGLassMainActivity.player.setVideoSurface(glSurfaceView.getHolder().getSurface());
-        //movieWrapperView.addView(glSurfaceView,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        //movieWrapperView.addView(glSurfaceView);
-
-        //glRenderer=new GLRenderer(getContext());//"android.resource://"+context.getPackageName()+"/raw/cat"
-        //glRenderer.setPlayer(IGLassMainActivity.mediaPlayer);
-        //glSurfaceView.setRenderer(IGLassMainActivity.glRenderer);
-
         pictureView=findViewById(R.id.picture_view);
         pic1=findViewById(R.id.pic1);
         pic2=findViewById(R.id.pic2);

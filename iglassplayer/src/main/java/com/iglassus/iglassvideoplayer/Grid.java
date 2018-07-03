@@ -73,9 +73,7 @@ public class Grid {
             for(int col = 0; col < width; col++) {
                 float coll=2*col/w-1;
                 //vertices[i++] = coll/(2-row/(height-1));
-                verticesNoDistortion[i]=coll;vertices[i++] = coll;
-                //vertices[i++] = roww-(row==0?ratioDown[col]:ratioUp[col]);
-                //vertices[i++] = roww-(0.135f*(coll*coll)-0.001f);
+                verticesNoDistortion[i]=-coll;vertices[i++] = -coll;//这里取相反数就不用在fragment shader里面翻转了，减少计算省电嘛
                 verticesNoDistortion[i]=roww;vertices[i++] = roww-(k*coll*coll+b);
                 verticesNoDistortion[i]=0.0f;vertices[i++] = 0.0f;
             }

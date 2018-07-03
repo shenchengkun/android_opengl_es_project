@@ -160,13 +160,13 @@ public class GLRenderer implements GLSurfaceView.Renderer, SurfaceTexture.OnFram
         if(is2D) GLES20.glVertexAttribPointer(aTextureCoordHandle,2,GLES20.GL_FLOAT,false,8,textureVertexBuffer);
 
 ////////////////////////////////////Left///////////////////////////////////////////////
-        GLES20.glViewport(0,0+(is169?offset:0),screenWidth/2,screenHeight-2*(is169?offset:0));
+        GLES20.glViewport(screenWidth,is169?offset:0,screenWidth,screenHeight-2*(is169?offset:0));  //由于vertex x坐标都取反了，所以这里左右也翻转
         if(!is2D) GLES20.glVertexAttribPointer(aTextureCoordHandle,2,GLES20.GL_FLOAT,false,8,leftTextureVertexBuffer);
         GLES20.glVertexAttribPointer(aPositionHandle, 3, GLES20.GL_FLOAT, false, 12, distortion?vertexBufferNoDis:vertexBuffer);
         GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, grid.getIndicesCount(), GLES20.GL_UNSIGNED_INT, indiceBuffer);
 ////////////////////////////////////Right///////////////////////////////////////////////
         if(!is2D) GLES20.glVertexAttribPointer(aTextureCoordHandle,2,GLES20.GL_FLOAT,false,8,rightTextureVertexBuffer);
-        GLES20.glViewport(screenWidth/2,0+(is169?offset:0),screenWidth/2,screenHeight-2*(is169?offset:0));
+        GLES20.glViewport(0,is169?offset:0,screenWidth,screenHeight-2*(is169?offset:0));
         GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, grid.getIndicesCount(), GLES20.GL_UNSIGNED_INT, indiceBuffer);
     }
 
@@ -177,7 +177,8 @@ public class GLRenderer implements GLSurfaceView.Renderer, SurfaceTexture.OnFram
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        screenWidth=width; screenHeight=height;
+        screenWidth=width/2; screenHeight=height;
+        //因为是duplicate，所以width取一半
         offset=(int)(screenHeight*0.09);
         Log.d("获得屏幕尺寸哈哈哈哈或", "onSurfaceChanged width = " + width + "  height = " + height);
     }

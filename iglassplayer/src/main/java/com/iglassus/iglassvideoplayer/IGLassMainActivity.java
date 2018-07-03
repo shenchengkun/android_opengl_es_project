@@ -835,7 +835,7 @@ public class IGLassMainActivity extends Activity{
             mAdapter.setOnItemClickListener(new ListAdapter.OnItemClickListener() {
                 @Override
                 public void onClick(int position) {
-                    Toast.makeText(getApplicationContext(),"播放第"+(position+1)+"个视频",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"play "+(position+1)+"th video",Toast.LENGTH_SHORT).show();
                     playPause.setBackgroundColor(Color.YELLOW);
                     isPlaying=true;
                     palyYoutubeWithID(IGLassMainActivity.this.mAdapter.myData.get(position).getId(),false);

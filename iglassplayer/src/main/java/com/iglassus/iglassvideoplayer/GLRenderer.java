@@ -150,7 +150,7 @@ public class GLRenderer implements GLSurfaceView.Renderer, SurfaceTexture.OnFram
         }
         GLES20.glUseProgram(programId);
         //GLES20.glUniformMatrix4fv(uMatrixHandle,1,false,projectionMatrix,0);
-        GLES20.glUniformMatrix4fv(uSTMMatrixHandle, 1, false, mSTMatrix, 0);
+        //GLES20.glUniformMatrix4fv(uSTMMatrixHandle, 1, false, mSTMatrix, 0);
         GLES20.glUniform1i(uTextureSamplerHandle,0);
         GLES20.glEnableVertexAttribArray(aPositionHandle);
         GLES20.glEnableVertexAttribArray(aTextureCoordHandle);
@@ -179,7 +179,8 @@ public class GLRenderer implements GLSurfaceView.Renderer, SurfaceTexture.OnFram
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         screenWidth=width/2; screenHeight=height;
         //因为是duplicate，所以width取一半
-        offset=(int)(screenHeight*0.09);
+        //offset=(int)(screenHeight*0.09);
+        offset=0;
         Log.d("获得屏幕尺寸哈哈哈哈或", "onSurfaceChanged width = " + width + "  height = " + height);
     }
 }

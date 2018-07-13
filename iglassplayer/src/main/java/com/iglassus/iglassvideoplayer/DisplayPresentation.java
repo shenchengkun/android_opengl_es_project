@@ -2,8 +2,10 @@ package com.iglassus.iglassvideoplayer;
 
 import android.app.Presentation;
 import android.content.Context;
+import android.content.Intent;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,4 +66,9 @@ public class DisplayPresentation extends Presentation {
         Picasso.with(context).load(new File(path)).into(pic2);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(IGLassMainActivity.app!=null) IGLassMainActivity.app.finishAndRemoveTask();
+    }
 }

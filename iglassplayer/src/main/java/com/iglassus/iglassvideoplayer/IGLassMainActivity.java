@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -167,6 +168,7 @@ public class IGLassMainActivity extends Activity{
         //YouTube的话还有网络请求，这部分可以考虑mvp架构。
         // 3个fragment都需要不停的和activity交互以便控制视频嘛,其实presentation也应该看成一个fragment，控制着glass上的UI
         //service作为presentation的容器存在，实际控制端应该还是activity
+
         setUpSimpleExoPlayer();
         setUoGlPlayerView();
         setUpControlPanel();
@@ -648,7 +650,9 @@ public class IGLassMainActivity extends Activity{
         playPause.setBackgroundColor(Color.YELLOW);
     }
 
+
     private void setUpSimpleExoPlayer() {
+
         dataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this, "yourApplicationName"), new DefaultBandwidthMeter());
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
         TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
@@ -709,7 +713,7 @@ public class IGLassMainActivity extends Activity{
         });
     }
     private void setUoGlPlayerView() {
-        Grid grid=new Grid(50,50);
+        Grid grid=new Grid(20,20);
         glRenderer=new GLRenderer(this,grid,player);//"android.resource://"+context.getPackageName()+"/raw/cat"
     }
 

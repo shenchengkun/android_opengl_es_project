@@ -135,6 +135,13 @@ public class GLRenderer implements GLSurfaceView.Renderer, SurfaceTexture.OnFram
         surfaceTexture = new SurfaceTexture(textureId);
         surfaceTexture.setOnFrameAvailableListener(this);
         exoPlayer.setVideoSurface(new Surface(surfaceTexture));
+
+        GLES20.glUseProgram(programId);
+        GLES20.glUniform1i(uTextureSamplerHandle,0);
+        GLES20.glEnableVertexAttribArray(aPositionHandle);
+        GLES20.glEnableVertexAttribArray(aTextureCoordHandle);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,textureId);
     }
 
 
@@ -144,18 +151,12 @@ public class GLRenderer implements GLSurfaceView.Renderer, SurfaceTexture.OnFram
         synchronized (this){
             if (updateSurface){
                 surfaceTexture.updateTexImage();
-                surfaceTexture.getTransformMatrix(mSTMatrix);
+                //surfaceTexture.getTransformMatrix(mSTMatrix);
                 updateSurface = false;
             }
         }
-        GLES20.glUseProgram(programId);
         //GLES20.glUniformMatrix4fv(uMatrixHandle,1,false,projectionMatrix,0);
         //GLES20.glUniformMatrix4fv(uSTMMatrixHandle, 1, false, mSTMatrix, 0);
-        GLES20.glUniform1i(uTextureSamplerHandle,0);
-        GLES20.glEnableVertexAttribArray(aPositionHandle);
-        GLES20.glEnableVertexAttribArray(aTextureCoordHandle);
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,textureId);
         //GLES20.glBindTexture(GL_TEXTURE_2D, textureId);
         if(is2D) GLES20.glVertexAttribPointer(aTextureCoordHandle,2,GLES20.GL_FLOAT,false,8,textureVertexBuffer);
 

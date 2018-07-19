@@ -157,7 +157,6 @@ public class IGLassMainActivity extends Activity{
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.iglass_layout_main);
         if(noHDMI()) {
             finishAndRemoveTask();
             noHDMI=true;
@@ -169,6 +168,7 @@ public class IGLassMainActivity extends Activity{
         // 3个fragment都需要不停的和activity交互以便控制视频嘛,其实presentation也应该看成一个fragment，控制着glass上的UI
         //service作为presentation的容器存在，实际控制端应该还是activity
 
+        setContentView(R.layout.iglass_layout_main);
         setUpSimpleExoPlayer();
         setUoGlPlayerView();
         setUpControlPanel();

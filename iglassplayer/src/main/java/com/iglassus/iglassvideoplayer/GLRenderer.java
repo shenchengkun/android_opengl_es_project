@@ -5,6 +5,7 @@ package com.iglassus.iglassvideoplayer;
  */
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.opengl.GLES11Ext;
@@ -122,7 +123,7 @@ public class GLRenderer implements GLSurfaceView.Renderer, SurfaceTexture.OnFram
 
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         int[] textures = new int[1];
-        GLES20.glGenTextures(1, textures, 0);
+
 
         textureId = textures[0];
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textureId);

@@ -8,5 +8,7 @@ void main() {
 
       //oriX=1.0-oriX;   //flip
 
+    //mediump vec4 color = texture2D(sTexture, vTexCoord);
+    //gl_FragColor = vec4(0.0-color.r,1.2-color.g,0.6-color.b, color.w);
     gl_FragColor=texture2D(sTexture, vTexCoord);
 }

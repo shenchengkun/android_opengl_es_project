@@ -92,9 +92,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class IGLassMainActivity extends Activity{
-    private boolean flip=true;
-    private boolean distortion=true;
-    private boolean is2D=true;
 
     public static final String AcessToken = "TokenIDVRAcess";
     private GridView gridView;
@@ -105,8 +102,12 @@ public class IGLassMainActivity extends Activity{
     private DialogProperties properties = new DialogProperties();
     private FilePickerDialog filePickerDialog;
 
+
+    private boolean flip=true;
+    private boolean distortion=false;
+    private boolean is2D=true;
     private ImageView playPause,stretch,mode,lock;
-    private boolean isPlaying=false,is169=false;
+    private boolean isPlaying=false,is169=true;
     private TextView movieDuration;
     private SeekBar seekBar;
     private PlayerTimer playerTimer;
@@ -639,7 +640,7 @@ public class IGLassMainActivity extends Activity{
         DisplayPresentation.hidePicView();
         DisplayPresentation.showMovieView();
 
-        if(is169){
+        if(!is169){
             stretch.performClick();
         }
 

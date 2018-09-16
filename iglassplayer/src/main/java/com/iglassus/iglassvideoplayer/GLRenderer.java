@@ -63,8 +63,8 @@ public class GLRenderer implements GLSurfaceView.Renderer, SurfaceTexture.OnFram
     public boolean is2D=true;
     public int offset=-0;
     private SimpleExoPlayer exoPlayer;
-    public boolean distortion=true;
-    public boolean is169=false;
+    public boolean distortion=false;
+    public boolean is169=true;
 
     public GLRenderer(Context context, Grid grid,SimpleExoPlayer player) {
         this.context = context;

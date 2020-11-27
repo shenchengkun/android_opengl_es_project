@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.hardware.display.DisplayManager;
@@ -741,6 +742,19 @@ public class IGLassMainActivity extends Activity{
         startService(glassService);
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
+            findViewById(R.id.big_container).setVisibility(View.INVISIBLE);
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
+            findViewById(R.id.big_container).setVisibility(View.VISIBLE);
+        }
+    }
+
     ////////////////All below are for youtube playing////////////////////////
     private class RunTask extends AsyncTask<String,String,List<data>> {//内存泄漏（改static）有待提高
         List<data> myData;
@@ -969,5 +983,4 @@ public class IGLassMainActivity extends Activity{
         this.pages = new ArrayList();
         this.pages.add("");
     }
-
 }

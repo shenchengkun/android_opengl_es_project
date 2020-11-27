@@ -29,9 +29,9 @@
         >
 
         <activity android:name="com.iglassus.iglassvideoplayer.IGLassMainActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
